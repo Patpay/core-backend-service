@@ -1,7 +1,7 @@
 module.exports = {
   swagger: {
     active: true,
-    host: "api.dev.patpay.com",
+    host: 'api.dev.patpay.com',
   },
   environment: process.env.ENVIRONMENT,
   server: {
