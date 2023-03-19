@@ -1,0 +1,73 @@
+{
+  "name": "core-backend-service-patpay",
+  "version": "1.0.0",
+  "description": "handles patpay core business services",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Patpay/core-backend-service-patpay.git"
+  },
+  "author": "Olutosin Anjorin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Patpay/core-backend-service-patpay/issues"
+  },
+  "homepage": "https://github.com/Patpay/core-backend-service-patpay#readme",
+  "dependencies": {
+    "@hapi/bell": "^12.1.1",
+    "@hapi/boom": "^9.1.0",
+    "@hapi/cookie": "^11.0.2",
+    "@hapi/hapi": "^20.0.2",
+    "@hapi/inert": "^6.0.3",
+    "@hapi/vision": "^6.0.1",
+    "amqplib": "^0.8.0",
+    "aws-sdk": "^2.864.0",
+    "axios": "^0.21.1",
+    "bcrypt": "^5.0.0",
+    "bluebird": "^3.7.2",
+    "cloudinary": "^1.31.0",
+    "cls-hooked": "^4.2.2",
+    "config": "^1.28.1",
+    "cron": "^1.8.2",
+    "crypto": "^1.0.1",
+    "csvtojson": "^2.0.10",
+    "dotenv": "^8.2.0",
+    "form-data": "^4.0.0",
+    "good": "^7.3.0",
+    "hapi-auth-bearer-token": "^8.0.0",
+    "hapi-auth-cookie": "^10.0.0",
+    "hapi-swagger": "^14.2.5",
+    "hapijs-namespace": "^1.0.4",
+    "joi": "^17.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "mongoose": "^6.5.3",
+    "pug": "^3.0.2",
+    "pug-pdf": "^0.1.1",
+    "puppeteer": "^13.4.1",
+    "read-excel-file": "^5.5.3",
+    "redis": "^4.5.1",
+    "request": "^2.88.2",
+    "selectn": "^0.9.6",
+    "stripe": "^8.222.0",
+    "uuid": "^3.3.2",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "chromedriver": "^95.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "faker": "^4.1.0",
+    "husky": "^4.2.3",
+    "jest": "^25.5.4",
+    "nodemon": "^2.0.12"
+  }
+}
