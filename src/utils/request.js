@@ -25,6 +25,7 @@ async function postRequest(url, data, headers) {
     });
     return { statusCode: response.status, data: response.data };
   } catch (err) {
+    logger.error(err);
     return { statusCode: err.response.status, data: err.response.data };
   }
 }
