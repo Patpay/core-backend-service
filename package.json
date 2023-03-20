@@ -4,8 +4,16 @@
   "description": "handles patpay core business services",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index",
+    "pm2": "pm2 start src/index.js --name core-backend",
+    "pm2-reload": "pm2 reload src/index.js --name core-backend",
+    "dev": "nodemon src/index.js",
+    "stag": "export NODE_ENV=staging && pm2 start src/index.js",
+    "start:seed": "export SEED=true && npm run start",
+    "test": "export NODE_ENV=test && jest --runInBand --coverage",
+    "lint": "eslint --ext js",
+    "precommit": "npm run lint",
+    "prepush": "npm run test"
   },
   "repository": {
     "type": "git",
@@ -46,6 +54,7 @@
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
+    "log4js": "^6.9.1",
     "moment": "^2.29.1",
     "mongoose": "^6.10.3",
     "pug": "^3.0.2",
