@@ -1,12 +1,13 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-return-await */
 const jwt = require('jsonwebtoken');
+const config = require('config');
 const logger = require('./logger');
 require('dotenv').config();
 
 module.exports = {
   async sign(data) {
-    return await jwt.sign(data, process.env.jwtSecret, { expiresIn: '1h' });
+    return await jwt.sign(data, config.jwtSecret, { expiresIn: '1h' });
   },
   async verify(token) {
     try {
