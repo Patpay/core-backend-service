@@ -1,16 +1,23 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-return-await */
 const jwt = require('jsonwebtoken');
-const logger = require('./logger');
-require('dotenv').config();
+const config = require('config');
+const { logger } = require('./logger');
 
 module.exports = {
   async sign(data) {
-    return await jwt.sign(data, process.env.jwtSecret, { expiresIn: '1h' });
+    try {
+      return await jwt.sign(data, config.jwtSecret, { expiresIn: '1h' });
+    } catch (error) {
+      logger.log({
+        level: 'error',
+        message: error,
+      });
+    }
   },
   async verify(token) {
     try {
-      return await jwt.verify(token, process.env.jwtSecret);
+      return await jwt.verify(token, config.jwtSecret);
     } catch (error) {
       logger.log({
         level: 'error',

@@ -14,6 +14,7 @@ module.exports = {
       },
     },
   },
+  jwtSecret: process.env.JWT_TOKEN,
   mongodb: {
     url: process.env.DB_HOST,
   },
