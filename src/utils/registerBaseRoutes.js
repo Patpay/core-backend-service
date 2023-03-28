@@ -5,5 +5,5 @@ const {
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (server) => {
-  userApi(server, '/v1/user');
+  userApi(server, '/v1/users');
 };

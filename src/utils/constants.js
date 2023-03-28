@@ -9,6 +9,7 @@ module.exports = Object.freeze({
     'Hey we seem to have your records, kindly login with your email or phone number',
   INVALID_USER: 'Invalid User Credentials',
   TOKEN_RANGE: 10000,
+  TOKEN_SENT: 'Token Sent, Check your email or SMS inbox',
   ACCOUNT_NOT_ACTIVATED: 'Account Is Not Activated',
   INVALID_TOKEN: 'Invalid Details or this account has been activated',
 });

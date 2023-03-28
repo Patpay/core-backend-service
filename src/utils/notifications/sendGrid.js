@@ -4,7 +4,7 @@ const sgMail = require('@sendgrid/mail');
 const config = require('config');
 const { logger } = require('../logger');
 
-module.export = async function sendgridEmail(msg) {
+async function sendgridEmail(msg) {
   sgMail.setApiKey(config.sendgrid.apiKey);
   const data = {
     to: msg.to,
@@ -21,4 +21,7 @@ module.export = async function sendgridEmail(msg) {
         logger.error(error.response.body);
       }
     });
+}
+module.exports = {
+  sendgridEmail,
 };

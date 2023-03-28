@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
   {
-    fullName: {
+    firstname: {
+      type: String,
+      required: true,
+    },
+    lastname: {
       type: String,
       required: true,
     },
@@ -25,6 +29,11 @@ const userSchema = new mongoose.Schema(
     token: {
       type: String,
     },
+    activated: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     status: {
       type: String,
       default: 'INACTIVE',
@@ -34,7 +43,4 @@ const userSchema = new mongoose.Schema(
   { strict: 'throw', timestamps: true },
 );
 
-const User = mongoose.model('User', userSchema);
-module.exports = {
-  User,
-};
+module.exports = mongoose.model('User', userSchema);
