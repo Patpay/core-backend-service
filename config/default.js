@@ -1,7 +1,7 @@
 module.exports = {
   swagger: {
     active: true,
-    host: 'api.dev.patpay.com',
+    host: 'api.dev.bana.com',
   },
 
   environment: process.env.ENVIRONMENT,
@@ -14,9 +14,14 @@ module.exports = {
       },
     },
   },
+  cors: { origin: ['*'] },
   jwtSecret: process.env.JWT_TOKEN,
   mongodb: {
     url: process.env.DB_HOST,
+  },
+  queue: {
+    coreQueue: process.env.CORE_QUEUE,
+    notificationQueue: process.env.NOTIFICATION_QUEUE,
   },
   rabbitMQ: {
     host: process.env.RABBITMQ_HOST,
@@ -29,5 +34,4 @@ module.exports = {
   mail: {
     from: process.env.EMAIL_FROM,
   },
-  cors: { origin: ['*'] },
 };
