@@ -1,0 +1,9 @@
+{
+    "PORT": 4000,
+    "ENVIRONMENT": "staging",
+    "JWT_TOKEN": "cookie_encryption_password_secure",
+    "CORE_QUEUE": "core-queue-dev-5",
+    "SWAGGER_HOST": "api.dev.bana.com",
+    "DB_HOST": "mongodb+srv://anjorintosin:EmTPkobygrecgie3@cluster0.pl9k5wp.mongodb.net/test",
+    "SENDGRID_API_KEY": "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"
+}
