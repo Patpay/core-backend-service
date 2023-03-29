@@ -4,7 +4,7 @@ const config = require('config');
 const Hapi = require('@hapi/hapi');
 const { logger } = require('./utils/logger');
 const authStrategies = require('./utils/authStrategy');
-const registerPlugins = require('./utils/registeredPlugings');
+const registerPlugins = require('./utils/registerPlugins');
 // const { subscriber } = require('./utils/queue/subscriber');
 const registerBaseRoutes = require('./utils/registerBaseRoutes');
 

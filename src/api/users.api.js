@@ -62,7 +62,7 @@ module.exports = (server, prefix) => {
       path: '/user/activate/{userId}/{token}',
       config: {
         description: 'Activate Account',
-        tags: ['api', 'users'],
+        tags: ['api', 'user'],
         cors: configs.cors,
         validate: {
           params: Joi.object({
@@ -82,7 +82,7 @@ module.exports = (server, prefix) => {
       path: '/user/forget-password/{emailMobile}',
       config: {
         description: 'forgot-password',
-        tags: ['api', 'users'],
+        tags: ['api', 'user'],
         cors: configs.cors,
         validate: {
           params: Joi.object({
@@ -119,7 +119,7 @@ module.exports = (server, prefix) => {
       path: '/user/change-password',
       config: {
         description: 'change user password',
-        tags: ['api', 'users'],
+        tags: ['api', 'user'],
         cors: configs.cors,
         auth: 'simple',
         validate: {
@@ -156,7 +156,7 @@ module.exports = (server, prefix) => {
       path: '/user/update-user',
       config: {
         description: 'update use details',
-        tags: ['api', 'users'],
+        tags: ['api', 'user'],
         cors: configs.cors,
         auth: 'simple',
         validate: {
@@ -193,7 +193,7 @@ module.exports = (server, prefix) => {
       path: '/user/set-pin',
       config: {
         description: 'Set user pin',
-        tags: ['api', 'users'],
+        tags: ['api', 'user'],
         cors: configs.cors,
         auth: 'simple',
         validate: {
@@ -227,7 +227,7 @@ module.exports = (server, prefix) => {
       path: '/user/resend/{userId}',
       config: {
         description: 'Resend Token',
-        tags: ['api', 'users'],
+        tags: ['api', 'user'],
         cors: configs.cors,
         validate: {
           params: Joi.object({

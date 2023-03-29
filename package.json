@@ -1,7 +1,7 @@
 {
-  "name": "core-backend-service-patpay",
+  "name": "core-backend-service-bana",
   "version": "1.0.0",
-  "description": "handles patpay core business services",
+  "description": "handles bana core business services",
   "main": "index.js",
   "scripts": {
     "start": "node src/index",
