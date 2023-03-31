@@ -25,4 +25,8 @@ module.exports = {
       });
     }
   },
+  async confirmUser(request) {
+    const { user } = await jwt.verify(request.auth.credentials.token, config.jwtSecret);
+    return await request.server.app.services.users.isUser(user);
+  },
 };

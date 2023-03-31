@@ -45,6 +45,12 @@ async function checkUserExist(user) {
 module.exports = {
   userService() {
     return {
+      async isUser(user) {
+        if (!isValidObjectId(user)) return false;
+
+        const admins = await User.findOne({ _id: user, status: 'ACTIVE' });
+        return admins;
+      },
       async signUpUser(user) {
         try {
           const validate = await User.findOne({

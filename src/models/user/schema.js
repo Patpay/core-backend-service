@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { validateBankAccount } = require('../bankAccount/validate');
 
 const userSchema = new mongoose.Schema(
   {
@@ -33,6 +34,13 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
       default: false,
+    },
+    withdrawalBankAccount: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BankAccount',
+      index: true,
+      sparse: true,
+      validate: validateBankAccount,
     },
     status: {
       type: String,

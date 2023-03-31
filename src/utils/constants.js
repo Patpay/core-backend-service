@@ -12,4 +12,8 @@ module.exports = Object.freeze({
   TOKEN_SENT: 'Token Sent, Check your email or SMS inbox',
   ACCOUNT_NOT_ACTIVATED: 'Account Is Not Activated',
   INVALID_TOKEN: 'Invalid Details or this account has been activated',
+  ACCOUNT_TYPE_MARKETER: 'Marketer',
+  PROVIDER_PROVIDUS: 'Providus',
+  PROVIDER_KUDA: 'Kuda',
+  WITHDRAWAL_ACCOUNT: 'Withdrawal',
 });
