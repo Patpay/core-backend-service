@@ -90,6 +90,15 @@ const setPin = async (request) => {
   return response;
 };
 
+const generateBankAccount = async (request) => {
+  const { user } = await verify(request.auth.credentials.token);
+  const response = await request.server.app.services.users.generateBankAccount(user);
+  if (response.error) {
+    return error(400, response.error);
+  }
+  return response;
+};
+
 module.exports = {
   signUpUser,
   signInUser,
@@ -100,4 +109,5 @@ module.exports = {
   changePassword,
   updateUser,
   setPin,
+  generateBankAccount,
 };

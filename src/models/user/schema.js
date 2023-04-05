@@ -47,6 +47,13 @@ const userSchema = new mongoose.Schema(
       default: 'INACTIVE',
       enum: ['ACTIVE', 'INACTIVE', 'TERMINATED'],
     },
+    bankAccount: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BankAccount',
+      index: true,
+      sparse: true,
+      validate: validateBankAccount,
+    },
   },
   { strict: 'throw', timestamps: true },
 );

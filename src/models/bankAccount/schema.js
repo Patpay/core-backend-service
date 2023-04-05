@@ -42,6 +42,10 @@ const bankAccountSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    bank: {
+      type: String,
+      required: true,
+    },
   },
   { strict: 'throw', timestamps: true },
 );

@@ -34,4 +34,12 @@ module.exports = {
   mail: {
     from: process.env.EMAIL_FROM,
   },
+  Kuda: {
+    email: process.env.KUDA_EMAIL,
+    apiKey: process.env.KUDA_API_KEY,
+    password: process.env.KUDA_WEBHOOK_PASSWORD,
+    loginURL: process.env.KUDA_LOGIN_URL,
+    ACCOUNT_NUMBER: process.env.KUDA_ACCOUNT_NUMBER,
+    accountCreationURL: process.env.KUDA_ACCOUNT_CREATION_URL,
+  },
 };
