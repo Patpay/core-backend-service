@@ -173,13 +173,13 @@ module.exports = {
             headers,
           );
           if (JSON.parse(jsonCreateResponse.data.data).Status === false) {
-            const errorMessage = JSON.parse(jsonCreateResponse.data.data).Message;
+            const errorMessages = JSON.parse(jsonCreateResponse.data.data).Message;
 
             logger.log({
               level: 'error',
-              message: errorMessage,
+              message: errorMessages,
             });
-            return { error: errorMessage };
+            return { error: errorMessages };
           }
           const responseData = JSON.parse(jsonCreateResponse.data.data);
           if (jsonCreateResponse.statusCode === 200 && responseData.Status === true) {
