@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /* eslint-disable max-len */
 /* eslint-disable no-return-await */
 /* eslint-disable consistent-return */
@@ -10,9 +11,7 @@ const { sendgridEmail } = require('../utils/notifications/sendGrid');
 const { hashManager } = require('../utils/bcrypt');
 const { sign } = require('../utils/tokenizer');
 
-const {
-  User,
-} = require('../models/index');
+const { User } = require('../models/index');
 
 async function getResponse(user) {
   user = user.toObject();
@@ -44,6 +43,7 @@ async function checkUserExist(user) {
 
 module.exports = {
   userService() {
+    const { bankAccountService } = require('.');
     return {
       async isUser(user) {
         if (!isValidObjectId(user)) return false;
@@ -101,15 +101,13 @@ module.exports = {
             },
           );
           if (updatedUser) {
-            const {
-              email, firstname,
-            } = updatedUser;
+            const { email, firstname } = updatedUser;
             sendgridEmail({
               data: { firstname },
               to: email,
               templateId: constants.ACTIVATION_SUCCESS_TEMPLATE_ID,
             });
-            return (await getResponse(updatedUser));
+            return await getResponse(updatedUser);
           }
         } catch (err) {
           logger.log({
@@ -374,9 +372,57 @@ module.exports = {
         try {
           const dbUser = await checkUserExist(payload);
           if (!dbUser) return { error: constants.NOT_FOUND };
-          const validatePassword = await hashManager().compare(payload.password, dbUser.password);
+          const validatePassword = await hashManager().compare(
+            payload.password,
+            dbUser.password,
+          );
           if (!validatePassword) return { erro: constants.INVALID_USER };
-          return (await getResponse(dbUser));
+          return await getResponse(dbUser);
+        } catch (err) {
+          logger.log({
+            level: 'error',
+            message: err,
+          });
+          return { error: constants.GONE_BAD };
+        }
+      },
+      async generateBankAccount(user) {
+        try {
+          const userToUpdate = await User.findOne({
+            _id: user,
+            status: 'ACTIVE',
+            bankAccount: { $exists: false },
+            activated: true,
+          });
+          if (!userToUpdate) {
+            return { error: 'Bank Account Exists' };
+          }
+
+          if (!userToUpdate.bankAccount) {
+            const { mobile } = userToUpdate;
+            const kudaNumber = mobile.charAt(0) === '2'
+              ? `${mobile.replace('234', '0')}`
+              : mobile;
+            const kudaData = {
+              email: userToUpdate.email,
+              mobile: kudaNumber,
+              firstname: userToUpdate.firstname,
+              lastname: userToUpdate.lastname,
+              user: userToUpdate._id,
+            };
+            const kudaResponse = await bankAccountService().createKudaVirtualAccount(kudaData);
+            if (!kudaResponse.error) {
+              userToUpdate.bankAccount = kudaResponse;
+            }
+          }
+          const updatedUser = await User.findOneAndUpdate(
+            {
+              _id: user,
+            },
+            { $set: userToUpdate },
+            { new: true },
+          );
+          return updatedUser;
         } catch (err) {
           logger.log({
             level: 'error',

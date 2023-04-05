@@ -1,7 +1,7 @@
 /* eslint-disable no-empty-pattern */
 const {
   userApi,
-  bankAccountApi
+  bankAccountApi,
 } = require('../api');
 
 // eslint-disable-next-line no-unused-vars
