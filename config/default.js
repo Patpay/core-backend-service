@@ -14,6 +14,11 @@ module.exports = {
       },
     },
   },
+  paystack: {
+    PAYSTACK_SECRET_KEY: process.env.PAYSTACK_SECRET_KEY,
+    PAYSTACK_BASE_URL: process.env.PAYSTACK_BASE_URL,
+    CONNECTION_TIMEOUT: process.env.CONNECTION_TIMEOUT,
+  },
   cors: { origin: ['*'] },
   jwtSecret: process.env.JWT_TOKEN,
   mongodb: {

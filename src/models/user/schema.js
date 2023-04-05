@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    merchantId: {
+      type: String,
+      required: true,
+    },
     withdrawalBankAccount: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'BankAccount',
@@ -46,6 +50,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: 'INACTIVE',
       enum: ['ACTIVE', 'INACTIVE', 'TERMINATED'],
+    },
+    bvnStatus: {
+      type: Boolean,
+      default: false,
     },
   },
   { strict: 'throw', timestamps: true },

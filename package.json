@@ -52,6 +52,7 @@
     "hapi-swagger": "^14.2.5",
     "hapijs-namespace": "^1.0.4",
     "joi": "^17.3.0",
+    "js-sha512": "^0.8.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "log4js": "^6.9.1",

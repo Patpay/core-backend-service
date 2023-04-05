@@ -16,4 +16,18 @@ module.exports = Object.freeze({
   PROVIDER_PROVIDUS: 'Providus',
   PROVIDER_KUDA: 'Kuda',
   WITHDRAWAL_ACCOUNT: 'Withdrawal',
+  TRANSFER_JOB: 'TRANSFER_JOB',
+  BULK_TRANSFER_JOB: 'BULK TRANSFER JOB',
+  TRANSACTION_TYPE: {
+    EXPENSE: 'EXPENSE',
+    INCOME: 'INCOME',
+  },
+  TRANSACTION_STATUS: {
+    PAID: 'PAID',
+    PENDING: 'PENDING',
+  },
+  STATUS: {
+    REVERSED: 'REVERSED',
+    FAILED: 'FAILED',
+  },
 });

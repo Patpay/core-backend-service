@@ -1,9 +1,12 @@
+/* eslint-disable global-require */
+/* eslint-disable no-unused-expressions */
 /* eslint-disable max-len */
 /* eslint-disable no-return-await */
 /* eslint-disable consistent-return */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
 const { isValidObjectId } = require('mongoose');
+const { v4: uuid } = require('uuid');
 const { logger } = require('../utils/logger');
 const constants = require('../utils/constants');
 const { sendgridEmail } = require('../utils/notifications/sendGrid');
@@ -32,7 +35,14 @@ async function getResponse(user) {
     }),
   };
 }
-
+function reformatPhoneNumber(mobile) {
+  // eslint-disable-next-line no-nested-ternary
+  return mobile.charAt(0) === '2'
+    ? `0${mobile.slice(3)}`
+    : mobile.charAt(0) === '+'
+      ? `0${mobile.slice(4)}`
+      : mobile;
+}
 async function checkUserExist(user) {
   const userExist = await User.findOne({
     $or: [{ email: user.email }, { mobile: user.email }],
@@ -44,6 +54,9 @@ async function checkUserExist(user) {
 
 module.exports = {
   userService() {
+    const {
+      bankingService,
+    } = require('.');
     return {
       async isUser(user) {
         if (!isValidObjectId(user)) return false;
@@ -61,6 +74,7 @@ module.exports = {
             user.token = token;
             if (!user.password) user.password = user.email;
             user.password = await hashManager().hash(user.password);
+            user.mobile = await reformatPhoneNumber(user.mobile)
             const newUser = await User.create(user);
             if (newUser.email) {
               sendgridEmail({
