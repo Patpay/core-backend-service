@@ -101,7 +101,7 @@ module.exports = {
       },
       async getMerchant(id) {
         if (!isValidObjectId(id)) return { error: constants.NOT_FOUND };
-        const merchant = await Merchant.findById({ id })
+        const merchant = await Merchant.findById(id)
           .populate('category', 'name');
         return merchant;
       },

@@ -5,15 +5,15 @@ const constants = require('../utils/constants');
 const { confirmAdmin } = require('../utils/tokenizer');
 
 const create = async (request) => {
-//   if (await confirmAdmin(request)) {
+  if (await confirmAdmin(request)) {
     const role = request.payload;
     const response = await request.server.app.services.roles.create(role);
     if (response.error) {
       return error(400, response.error);
     }
     return response;
-//   }
-//   return error(403, 'Unauthorized');
+  }
+  return error(403, 'Unauthorized');
 };
 const getAll = async (request) => {
   const {

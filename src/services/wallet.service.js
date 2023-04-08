@@ -115,7 +115,8 @@ module.exports = {
           return { error: constants.GONE_BAD };
         }
       },
-      async getWallets(payload) {
+      async getWallets() {
+        const payload = {};
         payload.status = 'ACTIVE';
         const wallets = await Wallet.find(payload)
           .populate('user', ' firstname lastname bvnStatus');

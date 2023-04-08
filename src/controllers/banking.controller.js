@@ -3,7 +3,7 @@ const config = require('config');
 const { error } = require('../utils/error');
 const constants = require('../utils/constants');
 const banksList = require('../utils/banks.json');
-const { verify } = require('../utils/tokenizer');
+const { verify, confirmAdmin } = require('../utils/tokenizer');
 
 const paystackPaymentCollection = async (request) => {
   const signature = request.headers['x-paystack-signature'];
@@ -96,6 +96,9 @@ const processFundTransfer = async (request) => {
 };
 
 const getAll = async (request) => {
+  if (!await confirmAdmin(request)) {
+    return error(400, 'Unauthorized');
+  }
   const { user } = await verify(request.auth.credentials.token);
   request.query.user = user;
   const users = await request.server.app.services.banking.getAll(
@@ -108,6 +111,9 @@ const getAll = async (request) => {
 };
 
 const createExpenseCategory = async (request) => {
+  if (!await confirmAdmin(request)) {
+    return error(400, 'Unauthorized');
+  }
   const { payload } = request;
   return await request.server.app.services.banking.createExpenseCategory(
     payload,
@@ -122,6 +128,9 @@ const createExpenseCategory = async (request) => {
 // };
 
 const updateExpenseCategory = async (request) => {
+  if (!await confirmAdmin(request)) {
+    return error(400, 'Unauthorized');
+  }
   const expenseCategory = request.payload;
   const { id } = request.params;
   if (

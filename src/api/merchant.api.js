@@ -134,7 +134,7 @@ module.exports = (server, prefix) => {
       },
     },
     {
-      method: 'PUT',
+      method: 'GET',
       path: '/merchant/{id}',
       config: {
         description: 'Get merchant by id',

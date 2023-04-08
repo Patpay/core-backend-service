@@ -2,10 +2,13 @@ const { error } = require('../utils/error');
 const constants = require('../utils/constants');
 
 const {
-  verify, confirmUser,
+  verify, confirmUser, confirmAdmin
 } = require('../utils/tokenizer');
 
 const createWithdrawalAccount = async (request) => {
+  if (!await confirmUser(request)) {
+    return error(400, 'Unauthorized');
+  }
   const { payload } = request;
   const { user } = await verify(request.auth.credentials.token);
 
@@ -31,7 +34,7 @@ const getWithdrawalAcct = async (request) => {
 };
 
 const getAll = async (request) => {
-  if (await confirmUser(request)) {
+  if (!await confirmAdmin(request)) {
     return error(400, 'Unauthorized');
   }
   const {

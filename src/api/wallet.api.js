@@ -7,10 +7,6 @@ function walletResponse() {
   return {
     balance: Joi.number().example(20000),
     user: Joi.string().example('5fb55fd471da0f122d564e7a'),
-    business: Joi.object({
-      tradingName: Joi.string().example('Sao Enterprise'),
-      _id: Joi.string().required().example('5fb55fd471da0f122d564e7a'),
-    }),
     status: Joi.string().valid('ACTIVE', 'INACTIVE', 'TERMINATED'),
     updatedAt: Joi.string().example('2020-11-18T17:54:28.209Z'),
     createdAt: Joi.string().example('2020-11-18T17:54:28.209Z'),
@@ -21,7 +17,7 @@ module.exports = (server, prefix) => {
   namespace(server, prefix, [
     {
       method: 'GET',
-      path: '/business',
+      path: '/user',
       config: {
         description: 'Get single wallet by ID',
         tags: ['api', 'wallet'],
@@ -30,11 +26,11 @@ module.exports = (server, prefix) => {
         handler: walletController.getWallet,
         plugins: {
           'hapi-swagger': {
-            id: 'getBusinessWallet',
+            id: 'getusersWallet',
             responses: {
               200: {
                 description: 'Should return status 200',
-                schema: Joi.object(walletResponse()).label('business-wallet'),
+                schema: Joi.object(walletResponse()).label('user-wallet'),
               },
             },
           },
@@ -43,20 +39,20 @@ module.exports = (server, prefix) => {
     },
     {
       method: 'GET',
-      path: '/new/business',
+      path: '/new/user',
       config: {
-        description: 'Get single wallet by ID',
+        description: 'Get wallets',
         tags: ['api', 'wallet'],
         auth: 'simple',
         cors: configs.cors,
         handler: walletController.getWallets,
         plugins: {
           'hapi-swagger': {
-            id: 'getBusinessWallets',
+            id: 'getUserWallet',
             responses: {
               200: {
                 description: 'Should return status 200',
-                schema: Joi.object(walletResponse()).label('business-wallet'),
+                schema: Joi.object(walletResponse()).label('user-wallet'),
               },
             },
           },
@@ -81,7 +77,6 @@ module.exports = (server, prefix) => {
               .max(24)
               .description('user of the wallet'),
             balance: Joi.number().description('amount in the account'),
-            type: Joi.string().valid('Business', 'Employee'),
             status: Joi.string().valid('ACTIVE', 'INACTIVE', 'TERMINATED'),
           }),
           failAction: async (request, h, err) => {

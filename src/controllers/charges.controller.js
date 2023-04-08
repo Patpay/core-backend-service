@@ -1,6 +1,10 @@
 const { error } = require('../utils/error');
+const { confirmAdmin } = require('../utils/tokenizer');
 
 const create = async (request) => {
+  if (!await confirmAdmin(request)) {
+    return error(400, 'Unauthorized');
+  }
   const charge = request.payload;
   if (!charge.minRange || !charge.maxRange) {
     return error(400, 'Min Range and Max Range must both have a value');
@@ -22,6 +26,9 @@ const create = async (request) => {
   return response;
 };
 const getAllCharges = async (request) => {
+  if (!await confirmAdmin(request)) {
+    return error(400, 'Unauthorized');
+  }
   const { offset, limit, status } = request.query;
   const result = await request.server.app.services.charges.getAllCharges({
     offset,
@@ -36,6 +43,9 @@ const getAllCharges = async (request) => {
   return response;
 };
 const getAllInflowCharges = async (request) => {
+  if (!await confirmAdmin(request)) {
+    return error(400, 'Unauthorized');
+  }
   const { offset, limit, status } = request.query;
   const result = await request.server.app.services.charges.getAllInflowCharges({
     offset,
@@ -57,6 +67,9 @@ const calculateCharge = async (request) => {
   return result;
 };
 const deactivate = async (request) => {
+  if (!await confirmAdmin(request)) {
+    return error(400, 'Unauthorized');
+  }
   const { id } = request.params;
   const response = await request.server.app.services.charges.deactivate(id);
   if (response.error) {

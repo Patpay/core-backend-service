@@ -177,20 +177,11 @@ module.exports = (server, prefix) => {
         tags: ['api', 'admin'],
         auth: 'simple',
         cors: configs.cors,
-        payload: {
-          output: 'stream',
-          parse: true,
-          allow: 'multipart/form-data',
-          maxBytes: 2 * 1000 * 1000,
-          multipart: true,
-        },
         validate: {
           payload: Joi.object({
-            photo: Joi.optional(),
             mobile: Joi.string()
               .optional()
               .example('+2347069671335'),
-            whatsappNumber: Joi.string().optional().example('string'),
           }),
           failAction: async (request, h, err) => {
             throw err;
