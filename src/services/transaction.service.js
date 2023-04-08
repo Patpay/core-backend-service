@@ -8,7 +8,6 @@ const { isValidObjectId } = require('mongoose');
 const mongoose = require('mongoose');
 const moment = require('moment');
 const { v4: uuid } = require('uuid');
-const { models } = require('../models/index');
 const constants = require('../utils/constants');
 const { logger } = require('../utils/logger');
 const constant = require('../utils/constants');
@@ -19,7 +18,7 @@ module.exports = {
   transactionService() {
     const {
       Transaction,
-    } = models;
+    } = require('../models/index');
 
     return {
       async createExpense(payload) {
@@ -27,34 +26,11 @@ module.exports = {
           if (!payload.transactionReference) {
             payload.transactionReference = uuid();
           }
-          if (!payload.subWallet) {
-            delete payload.subWallet;
-          }
           payload.type = constants.TRANSACTION_TYPE.EXPENSE;
-          payload.amountPaid = payload.amountPaid && payload.amountPaid > 0
-            ? payload.amountPaid
-            : payload.deposit;
-          payload.status = payload.transactionAmount > payload.amountPaid
-            ? constants.TRANSACTION_STATUS.PARTIALLY_PAID
-            : constants.TRANSACTION_STATUS.PAID;
-
-          payload.balanceAmount = payload.transactionAmount - payload.amountPaid;
+          payload.status = constants.TRANSACTION_STATUS.PAID;
 
           const transaction = await Transaction.create(payload);
-          if (payload.splitTransfer) {
-            await SalesSplitTransaction.findByIdAndUpdate(payload.splitTransfer, {
-              $set: {
-                transaction: transaction._id,
-              },
-            });
-          }
-
-          if (payload.transactionAmount > payload.amountPaid) {
-            payload.type = constant.TRANSACTION_TYPE.EXPENSE_DEBT;
-            payload.transaction = transaction._id;
-            await this.createDebtTransaction(payload);
-          }
-          return { message: constants.SUCCESS };
+          return { message: constants.SUCCESS, transactionId: transaction._id };
         } catch (ex) {
           logger.log({
             level: 'error',
@@ -66,6 +42,34 @@ module.exports = {
               text: `${JSON.stringify(ex.message)}
             *_Service_*:  Transaction
             *_Function_*: createExpense`,
+            },
+          );
+          return { error: constants.GONE_BAD };
+        }
+      },
+      async createIncome(payload) {
+        try {
+          if (!payload.transactionReference) {
+            payload.transactionReference = uuid();
+          }
+          payload.type = constants.TRANSACTION_TYPE.INCOME;
+          payload.status = constants.TRANSACTION_STATUS.PAID;
+          if (!payload.currencyCode) {
+            payload.currencyCode = 'NGN';
+          }
+          const transaction = await Transaction.create(payload);
+          return { message: constants.SUCCESS, transactionId: transaction._id};
+        } catch (ex) {
+          logger.log({
+            level: 'error',
+            message: ex,
+          });
+          postRequest(
+            'https://hooks.slack.com/services/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',
+            {
+              text: `${JSON.stringify(ex.message)}
+            *_Service_*:  Transaction
+            *_Function_*: createIncome`,
             },
           );
           return { error: constants.GONE_BAD };
@@ -151,23 +155,23 @@ module.exports = {
               $lte: new Date(moment().endOf('month').add(1, 'hour')),
             },
             type: 'EXPENSE',
-            category: 'WALLET',
             user,
           };
-          return await Transaction.countDocuments(query);
+          const count = await Transaction.countDocuments(query);
+          return count;
         } catch (error) {
           logger.log({
             level: 'error',
             message: error,
           });
-          postRequest(
-            'https://hooks.slack.com/services/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',
-            {
-              text: `${JSON.stringify(error.message)}
-          *_Service_*:  Transaction
-          *_Function_*: calculateCurrentMonthTransferCount`,
-            },
-          );
+          // postRequest(
+          //   'https://hooks.slack.com/services/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',
+          //   {
+          //     text: `${JSON.stringify(error.message)}
+          // *_Service_*:  Transaction
+          // *_Function_*: calculateCurrentMonthTransferCount`,
+          //   },
+          // );
           return { error: constants.GONE_BAD };
         }
       },
@@ -183,7 +187,6 @@ module.exports = {
               $lte: new Date(moment().endOf('day').add(1, 'hour')),
             },
             type: 'EXPENSE',
-            category: 'WALLET',
             user: mongoose.Types.ObjectId(user),
           };
 
@@ -446,66 +449,6 @@ module.exports = {
             *_Service_*:  Transaction
             *_Function_*: transactionSummary`,
           });
-          return { error: constants.GONE_BAD };
-        }
-      },
-      async updateStatus({
-        transactionReference,
-        balanceAmount,
-        currencyCode,
-        paymentMethod,
-        category,
-        _id,
-        type,
-        inflowType,
-        narration,
-        paidDate,
-        amountPaid,
-        deposit,
-        status,
-      }) {
-        try {
-          let query = {};
-          if (_id) {
-            query = { _id };
-          } else {
-            query = {
-              transactionReference,
-            };
-          }
-
-          const updateQuery = { status };
-          if (type) updateQuery.type = type;
-          if (currencyCode) updateQuery.currencyCode = currencyCode;
-          if (paidDate) updateQuery.paidDate = paidDate;
-          if (amountPaid) updateQuery.amountPaid = amountPaid;
-          if (paymentMethod) updateQuery.paymentMethod = paymentMethod;
-          if (category) updateQuery.category = category;
-          if (balanceAmount) updateQuery.balanceAmount = balanceAmount;
-          if (narration) updateQuery.narration = narration;
-          if (deposit) updateQuery.deposit = deposit;
-          if (inflowType) updateQuery.inflowType = inflowType;
-
-          return await Transaction.findOneAndUpdate(
-            query,
-            updateQuery,
-            {
-              new: true,
-            },
-          );
-        } catch (ex) {
-          logger.log({
-            level: 'error',
-            message: ex,
-          });
-          postRequest(
-            'https://hooks.slack.com/services/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',
-            {
-              text: `${JSON.stringify(ex.message)}
-            *_Service_*:  Transaction
-            *_Function_*: updateStatus`,
-            },
-          );
           return { error: constants.GONE_BAD };
         }
       },

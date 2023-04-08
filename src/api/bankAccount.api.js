@@ -69,8 +69,8 @@ module.exports = (server, prefix) => {
         cors: configs.cors,
         validate: {
           payload: Joi.object({
-            pin: Joi.string().required().description('the user pin'),
             bankCode: Joi.string().required().example('123456789'),
+            bank: Joi.string().required().example('UARANTY TRUST BANK'),
             accountName: Joi.string().required().example('user Account'),
             accountNumber: Joi.string().min(10).max(10).required().example('123456789'),
           }),

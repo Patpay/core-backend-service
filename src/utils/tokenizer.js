@@ -29,4 +29,12 @@ module.exports = {
     const { user } = await jwt.verify(request.auth.credentials.token, config.jwtSecret);
     return await request.server.app.services.users.isUser(user);
   },
+  async confirmAdmin(request) {
+    const { admin } = await jwt.verify(request.auth.credentials.token, config.jwtSecret);
+    return await request.server.app.services.admins.isAdmin(admin);
+  },
+  async confirmSuperAdmin(request) {
+    const { admin } = await jwt.verify(request.auth.credentials.token, config.jwtSecret);
+    return await request.server.app.services.admins.isSuperAdmin(admin);
+  },
 };

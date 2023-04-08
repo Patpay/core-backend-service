@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 async function validateCharge(val) {
-  const ExpenseCategory = mongoose.model('ExpenseCategory');
+  const Charge = mongoose.model('Charge');
   try {
-    const expenseCategory = await ExpenseCategory.findById(val).lean().exec();
-    return Boolean(expenseCategory);
+    const charge = await Charge.findById(val).lean().exec();
+    return Boolean(charge);
   } catch (ex) {
     return false;
   }

@@ -5,40 +5,40 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-return-await */
 const { isValidObjectId } = require('mongoose');
+const config = require('config');
+const { v4: uuid } = require('uuid');
 const constants = require('../utils/constants');
 const { logger } = require('../utils/logger');
+const { postRequest } = require('../utils/request');
 
 module.exports = {
   bankAccountService() {
     const {
       User, BankAccount,
     } = require('../models/index');
-    const { userService } = require('.');
     return {
       async saveWithdrawalAccount(payload, user) {
         try {
-          const validatePin = await userService().validatePin(payload.pin, user);
-          if (validatePin) {
-            delete payload.pin;
-            payload.provider = constants.WITHDRAWAL_ACCOUNT;
-            let account = await BankAccount.findOne({ user, accountNumber: payload.accountNumber });
-            if (account) {
-              return { error: constants.EXIST };
-            }
-            payload.activated = true;
-            payload.isSuccessful = true;
+          if (!payload.accountType) {
+            payload.accountType = constants.USER_ACCOUNT;
             payload.user = user;
-            account = await BankAccount.create(payload);
-
-            if (user) {
-              await User.findOneAndUpdate({ _id: user }, {
-                withdrawalBankAccount: account._id,
-              });
-            }
-
-            return account;
           }
-          return { error: constants.INVALID_PIN };
+          payload.provider = constants.WITHDRAWAL_ACCOUNT;
+          let account = await BankAccount.findOne({ $or: [{ user }, { merchant: payload.merchant }], accountNumber: payload.accountNumber });
+          if (account) {
+            return { error: constants.EXIST };
+          }
+          payload.activated = true;
+          payload.isSuccessful = true;
+          account = await BankAccount.create(payload);
+
+          if (user) {
+            await User.findOneAndUpdate({ _id: user }, {
+              withdrawalBankAccount: account._id,
+            });
+          }
+
+          return account;
         } catch (error) {
           logger.log({
             level: 'error',
@@ -133,6 +133,7 @@ module.exports = {
           });
         }
       },
+
     };
   },
 };

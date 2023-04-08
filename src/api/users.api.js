@@ -5,7 +5,7 @@ const { usersController } = require('../controllers');
 
 function userResponse() {
   return {
-    _id: Joi.string().required().example('5fb55fd471da0f122d564e7a'),
+    _id: Joi.string().required().example('5fb55fad471da0f122d564e7a'),
     email: Joi.string().required().example('t@w.v'),
     firstname: Joi.string().required().example('Samu'),
     lastname: Joi.string().required().example('Samu'),
@@ -49,7 +49,7 @@ module.exports = (server, prefix) => {
               .trim()
               .prefs({ convert: true }),
             password: Joi.string().required(),
-            mobile: Joi.string().required(),
+            mobile: Joi.string().min(11).max(11).required(),
             firstname: Joi.string().required(),
             lastname: Joi.string().required(),
           }),
@@ -165,7 +165,7 @@ module.exports = (server, prefix) => {
               .description('new user password'),
             firstname: Joi.string()
               .description('new user password'),
-            mobile: Joi.string()
+            mobile: Joi.string().min(11).max(11)
               .description('new user password'),
           }),
           failAction: async (request, h, err) => {
@@ -293,6 +293,31 @@ module.exports = (server, prefix) => {
           }),
         },
         handler: usersController.signInUser,
+      },
+    },
+    {
+      method: 'GET',
+      path: '/generate-bank-account',
+      config: {
+        description: 'Generate Bank Account',
+        tags: ['api', 'user'],
+        cors: configs.cors,
+        auth: 'simple',
+        handler: usersController.generateBankAccount,
+        plugins: {
+          'hapi-swagger': {
+            id: 'generate-bank-account',
+            responses: {
+              200: {
+                description: 'Should return status 200',
+                schema: Joi.object({
+                  msg: Joi.string().example('Success'),
+                  userId: Joi.string().required().example('5fb55fd471da0f122d564e7a'),
+                }),
+              },
+            },
+          },
+        },
       },
     },
   ]);

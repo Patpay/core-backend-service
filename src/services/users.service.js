@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable global-require */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable max-len */
@@ -6,16 +7,13 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
 const { isValidObjectId } = require('mongoose');
-const { v4: uuid } = require('uuid');
 const { logger } = require('../utils/logger');
 const constants = require('../utils/constants');
 const { sendgridEmail } = require('../utils/notifications/sendGrid');
 const { hashManager } = require('../utils/bcrypt');
 const { sign } = require('../utils/tokenizer');
 
-const {
-  User,
-} = require('../models/index');
+const { User } = require('../models/index');
 
 async function getResponse(user) {
   user = user.toObject();
@@ -55,7 +53,7 @@ async function checkUserExist(user) {
 module.exports = {
   userService() {
     const {
-      bankingService,
+      bankingService, walletService,
     } = require('.');
     return {
       async isUser(user) {
@@ -71,10 +69,15 @@ module.exports = {
           });
           if (!validate) {
             const token = Math.floor(Math.random() * 90000) + constants.TOKEN_RANGE;
+            user.banaId = `${user.firstname.substring(0, 5).toUpperCase()}${Math.floor(Math.random() * 90000) + constants.TOKEN_RANGE}`;
+            const validMerchant = await User.findOne({ merchantId: user.merchantId });
+            if (validMerchant) {
+              user.banaId = `${user.firstname.substring(0, 5).toUpperCase()}${Math.floor(Math.random() * 90000) + constants.TOKEN_RANGE}`;
+            }
             user.token = token;
             if (!user.password) user.password = user.email;
             user.password = await hashManager().hash(user.password);
-            user.mobile = await reformatPhoneNumber(user.mobile)
+            user.mobile = await reformatPhoneNumber(user.mobile);
             const newUser = await User.create(user);
             if (newUser.email) {
               sendgridEmail({
@@ -100,6 +103,10 @@ module.exports = {
       async activateUser(userId, token) {
         try {
           if (!isValidObjectId(userId)) return { error: constants.NOT_FOUND };
+          const walletPayload = {
+            user: userId,
+          };
+          const { wallets } = await walletService().createWallets(walletPayload);
           const updatedUser = await User.findOneAndUpdate(
             {
               _id: userId,
@@ -109,21 +116,21 @@ module.exports = {
             {
               activated: true,
               status: 'ACTIVE',
+              wallet: wallets,
             },
             {
               new: true,
             },
-          );
+          ).populate('bankAccount');
           if (updatedUser) {
-            const {
-              email, firstname,
-            } = updatedUser;
+            const { email, firstname } = updatedUser;
             sendgridEmail({
               data: { firstname },
               to: email,
               templateId: constants.ACTIVATION_SUCCESS_TEMPLATE_ID,
             });
-            return (await getResponse(updatedUser));
+            await this.generateBankAccount(userId);
+            return await getResponse(updatedUser);
           }
         } catch (err) {
           logger.log({
@@ -388,9 +395,83 @@ module.exports = {
         try {
           const dbUser = await checkUserExist(payload);
           if (!dbUser) return { error: constants.NOT_FOUND };
-          const validatePassword = await hashManager().compare(payload.password, dbUser.password);
+          const validatePassword = await hashManager().compare(
+            payload.password,
+            dbUser.password,
+          );
           if (!validatePassword) return { erro: constants.INVALID_USER };
-          return (await getResponse(dbUser));
+          return await getResponse(dbUser);
+        } catch (err) {
+          logger.log({
+            level: 'error',
+            message: err,
+          });
+          return { error: constants.GONE_BAD };
+        }
+      },
+      async getUserById(userId) {
+        try {
+          if (!isValidObjectId(userId)) {
+            return { error: constants.NOT_FOUND };
+          }
+          const user = await User.findById(userId)
+            .populate('withdrawalBankAccount')
+            .populate('bankAccount');
+          if (!user) {
+            return {
+              error: constants.NotFound,
+            };
+          }
+          return (await getResponse(user));
+        } catch (error) {
+          logger.log({
+            level: 'error',
+            message: error,
+          });
+          return { error: constants.GONE_BAD };
+        }
+      },
+      async generateBankAccount(user) {
+        try {
+          const userToUpdate = await User.findOne({
+            _id: user,
+            status: 'ACTIVE',
+            bankAccount: { $exists: false },
+            activated: true,
+          });
+          if (!userToUpdate) {
+            return { error: 'Bank Account Exists' };
+          }
+
+          if (!userToUpdate.bankAccount) {
+            const { mobile } = userToUpdate;
+
+            const kudaNumber = mobile.charAt(0) === '2'
+              ? `0${mobile.slice(3)}`
+              : mobile.charAt(0) === '+'
+                ? `0${mobile.slice(4)}`
+                : mobile;
+
+            const kudaData = {
+              email: userToUpdate.email,
+              mobile: kudaNumber,
+              firstname: userToUpdate.firstname,
+              lastname: userToUpdate.lastname,
+              user: userToUpdate._id,
+            };
+            const kudaResponse = await bankingService().createKudaVirtualAccount(kudaData);
+            if (!kudaResponse.error) {
+              userToUpdate.bankAccount = kudaResponse;
+            }
+          }
+          const updatedUser = await User.findOneAndUpdate(
+            {
+              _id: user,
+            },
+            { $set: userToUpdate },
+            { new: true },
+          );
+          return updatedUser;
         } catch (err) {
           logger.log({
             level: 'error',

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { validateUser } = require('../user/validate');
 const { validateExpenseCategory } = require('../expenseCategory/validate');
-const { validateTransaction } = require('./validate');
 const constants = require('../../utils/constants');
 
 const transactionSchema = new mongoose.Schema(
@@ -19,13 +18,6 @@ const transactionSchema = new mongoose.Schema(
       sparse: true,
       default: 'NGN',
       index: true,
-    },
-    transaction: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Transaction',
-      index: true,
-      sparse: true,
-      validate: validateTransaction,
     },
     expenseCategory: {
       type: mongoose.Schema.Types.ObjectId,

@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 const mongoose = require('mongoose');
 const { validateBankAccount } = require('../bankAccount/validate');
+const { validateWallet } = require('../wallet/validate');
 
 const userSchema = new mongoose.Schema(
   {
@@ -35,9 +37,16 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
-    merchantId: {
+    banaId: {
       type: String,
       required: true,
+    },
+    wallet: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Wallet',
+      index: true,
+      sparse: true,
+      validate: validateWallet,
     },
     withdrawalBankAccount: {
       type: mongoose.Schema.Types.ObjectId,
@@ -54,6 +63,13 @@ const userSchema = new mongoose.Schema(
     bvnStatus: {
       type: Boolean,
       default: false,
+    },
+    bankAccount: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BankAccount',
+      index: true,
+      sparse: true,
+      validate: validateBankAccount,
     },
   },
   { strict: 'throw', timestamps: true },

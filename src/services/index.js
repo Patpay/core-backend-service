@@ -4,6 +4,9 @@ const { walletService } = require('./wallet.service');
 const { transactionService } = require('./transaction.service');
 const { chargesService } = require('./charges.service');
 const { bankingService } = require('./banking.service');
+const { merchantService } = require('./merchant.service');
+const { adminService } = require('./admin.service');
+const { roleService } = require('./role.service')
 
 module.exports = {
   userService,
@@ -12,4 +15,7 @@ module.exports = {
   transactionService,
   chargesService,
   bankingService,
+  merchantService,
+  adminService,
+  roleService,
 };

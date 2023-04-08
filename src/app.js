@@ -5,7 +5,7 @@ const Hapi = require('@hapi/hapi');
 const { logger } = require('./utils/logger');
 const authStrategies = require('./utils/authStrategy');
 const registerPlugins = require('./utils/registerPlugins');
-// const { subscriber } = require('./utils/queue/subscriber');
+const { subscriber } = require('./utils/queue');
 const registerBaseRoutes = require('./utils/registerBaseRoutes');
 
 async function startServer({ services } = {}) {
@@ -19,7 +19,7 @@ async function startServer({ services } = {}) {
     authStrategies(server);
     registerBaseRoutes(server);
     await server.start();
-    // subscriber(config.queue.coreQueue);
+    subscriber(config.queue.coreQueue);
     logger.log({
       level: 'info',
       message: `%s %s started on port ${server.info.port}`,

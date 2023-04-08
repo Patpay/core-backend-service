@@ -1,13 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 const { isValidObjectId } = require('mongoose');
-const { models } = require('../models');
 const constants = require('../utils/constants');
 const { logger } = require('../utils/logger');
 const { postRequest } = require('../utils/request');
 
 module.exports = {
   chargesService() {
-    const { Charges, InflowCharge } = models;
+    const { Charges, InflowCharge } = require('../models/index');
     return {
       async create(payload) {
         try {
@@ -22,7 +21,7 @@ module.exports = {
         }
       },
       async getAllCharges({
-        offset = 0, limit = 100, status, business,
+        offset = 0, limit = 100, status,
       } = {}) {
         const query = {};
 
@@ -30,17 +29,11 @@ module.exports = {
           query.status = status;
         }
 
-        if (business) {
-          query.$or = [
-            { business },
-            { business: { $exists: false } },
-          ];
-        }
         const totalCounts = await Charges.countDocuments(query);
         const value = await Charges.find(query)
           .populate(
-            'business',
-            'tradingName',
+            'user',
+            'firstname',
           )
           .skip(offset)
           .sort({ name: 1 })
@@ -51,19 +44,19 @@ module.exports = {
         };
       },
       async getAllInflowCharges({
-        offset = 0, limit = 100, business, charge,
+        offset = 0, limit = 100, user, charge,
       } = {}) {
         const query = {};
 
-        if (business) {
-          query.business = business;
+        if (user) {
+          query.user = user;
         }
         if (charge) {
           query.charge = charge;
         }
         const totalCounts = await InflowCharge.countDocuments(query);
         const value = await InflowCharge.find(query)
-          .populate('business charge', 'tradingName name range type')
+          .populate('charge', 'name range type')
           .skip(offset)
           .sort({ createdAt: -1 })
           .limit(limit);
@@ -76,7 +69,7 @@ module.exports = {
         name,
         quantity,
         amount,
-        business,
+        user,
         // noMultiplication,
       }) {
         try {
@@ -84,8 +77,8 @@ module.exports = {
           if (name) {
             query.name = name;
           }
-          if (business) {
-            query.business = business;
+          if (user) {
+            query.user = user;
           }
 
           if (quantity || amount) {
@@ -93,33 +86,10 @@ module.exports = {
               { 'range.min': { $lte: (quantity || amount) } },
             ];
           }
-          let response = await Charges.findOne(query);
+          const response = await Charges.findOne(query);
 
-          if (!response && !business) {
-            postRequest(
-              'https://hooks.slack.com/services/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',
-              {
-                text: `Urgent: Charges not found for ${JSON.stringify(query)}
-              *_Service_*:  Charges
-              *_Function_*: calculateCharge`,
-              },
-            );
+          if (!response) {
             return { error: constants.NOT_FOUND };
-          }
-          if (business && !response) {
-            delete query.business;
-            response = await Charges.findOne(query);
-            if (!response) {
-              postRequest(
-                'https://hooks.slack.com/services/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',
-                {
-                  text: `Urgent: Charges not found for ${JSON.stringify(query)}
-                *_Service_*:  Charges
-                *_Function_*: calculateCharge`,
-                },
-              );
-              return { error: constants.NOT_FOUND };
-            }
           }
           let chargeAmount = 0;
           if (response.type === 'Fixed') {
@@ -152,7 +122,6 @@ module.exports = {
           return { error: constants.GONE_BAD };
         }
       },
-
       async deactivate(id) {
         try {
           if (!isValidObjectId(id)) return { error: constants.NOT_FOUND };

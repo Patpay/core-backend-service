@@ -128,7 +128,7 @@ module.exports = {
         }
         payload.status = 'ACTIVE';
         const wallet = await Wallet.findOne(payload)
-          .populate('user', 'firstname mobile lastname bvnStatus');
+          .populate('user');
 
         if (!wallet) return { error: constants.NOT_FOUND };
         return wallet;

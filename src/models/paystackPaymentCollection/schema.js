@@ -106,4 +106,4 @@ const paystackPaymentCollectionSchema = new mongoose.Schema(
   { strict: 'throw', timestamps: true },
 );
 
-module.exports = mongoose.model('PaystackPaymentCollection', paystackPaymentCollectionSchema)
+module.exports = mongoose.model('PaystackPaymentCollection', paystackPaymentCollectionSchema);

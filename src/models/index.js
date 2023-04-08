@@ -10,7 +10,12 @@ const { BVN } = require('./bvn/index');
 const { Kuda } = require('./kuda/index');
 const { PaystackPaymentCollection } = require('./paystackPaymentCollection/index');
 const { KudaTransferTracker } = require('./kudaTransferTracker/index');
-const { TransferRecon } = require('./transferPaymentReconcilation/index')
+const { TransferRecon } = require('./transferPaymentReconcilation/index');
+const { Beneficiary } = require('./beneficiary/index');
+const { TransferTrans } = require('./transferTransaction/index');
+const { Merchant } = require('./merchant/index');
+const { Admin } = require('./admin/index');
+const { Role } = require('./role/index');
 
 module.exports = {
   User,
@@ -26,4 +31,9 @@ module.exports = {
   Kuda,
   KudaTransferTracker,
   TransferRecon,
+  Beneficiary,
+  TransferTrans,
+  Merchant,
+  Admin,
+  Role,
 };

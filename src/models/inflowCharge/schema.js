@@ -6,9 +6,9 @@ const inflowChargeSchema = new mongoose.Schema(
   {
     charge: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Charges',
+      ref: 'Charge',
       index: true,
-      required: true,
+      sparse: true,
       validate: validateCharge,
     },
     value: {
@@ -27,7 +27,7 @@ const inflowChargeSchema = new mongoose.Schema(
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Business',
+      ref: 'User',
       index: true,
       sparse: true,
       validate: validateUser,
