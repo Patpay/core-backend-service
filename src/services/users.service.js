@@ -70,7 +70,7 @@ module.exports = {
           if (!validate) {
             const token = Math.floor(Math.random() * 90000) + constants.TOKEN_RANGE;
             user.banaId = `${user.firstname.substring(0, 5).toUpperCase()}${Math.floor(Math.random() * 90000) + constants.TOKEN_RANGE}`;
-            const validMerchant = await User.findOne({ merchantId: user.merchantId });
+            const validMerchant = await User.findOne({ banaId: user.banaId });
             if (validMerchant) {
               user.banaId = `${user.firstname.substring(0, 5).toUpperCase()}${Math.floor(Math.random() * 90000) + constants.TOKEN_RANGE}`;
             }

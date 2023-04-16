@@ -6,6 +6,7 @@ const bankingController = require('./banking.controller');
 const merchantController = require('./merchant.controller');
 const adminController = require('./admin.controller');
 const roleController = require('./roles.controller');
+const transactionController = require('./transaction.controller');
 
 module.exports = {
   usersController,
@@ -16,4 +17,5 @@ module.exports = {
   merchantController,
   adminController,
   roleController,
+  transactionController,
 };

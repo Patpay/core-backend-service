@@ -25,7 +25,7 @@ module.exports = {
             level: 'error',
             message: ex,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(ex.message)}
             *_Service_*:  roles
             *_Function_*: create`
@@ -69,7 +69,7 @@ module.exports = {
             level: 'error',
             message: error,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(error.message)}
             *_Service_*:  roles
             *_Function_*: update`
@@ -97,7 +97,7 @@ module.exports = {
             level: 'error',
             message: ex,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(ex.message)}
             *_Service_*:  roles
             *_Function_*: deactivate`

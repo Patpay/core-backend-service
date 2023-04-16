@@ -163,6 +163,74 @@ module.exports = (server, prefix) => {
       },
     },
     {
+      method: 'POST',
+      path: '/bank/verify-bana-details',
+      config: {
+        description: 'verify bana account details',
+        tags: ['api', 'banking'],
+        auth: 'simple',
+        validate: {
+          payload: Joi.object({
+            banaId: Joi.string()
+              .required()
+              .max(10)
+              .min(10)
+              .example('KENNY67890')
+              .description('user bana id'),
+
+          }),
+          failAction: async (request, h, err) => {
+            throw err;
+          },
+        },
+        handler: bankingController.verifyBanaAccount,
+        plugins: {
+          'hapi-swagger': {
+            id: 'verify-bana-details',
+            responses: {
+              200: {
+                accountName: Joi.object({ banaName: 'Donald Sam' }),
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      method: 'POST',
+      path: '/bank/verify-merchant-details',
+      config: {
+        description: 'verify bana merchant account details',
+        tags: ['api', 'banking'],
+        auth: 'simple',
+        validate: {
+          payload: Joi.object({
+            banaId: Joi.string()
+              .required()
+              .max(10)
+              .min(10)
+              .example('KENNY67890')
+              .description('user bana id'),
+
+          }),
+          failAction: async (request, h, err) => {
+            throw err;
+          },
+        },
+        handler: bankingController.verifyMerchantAccount,
+        plugins: {
+          'hapi-swagger': {
+            id: 'verify-bana-details',
+            responses: {
+              200: {
+                accountName: Joi.object({ banaName: 'Donald Sam' }),
+              },
+            },
+          },
+        },
+      },
+    },
+    {
       method: 'GET',
       path: '/transactions',
       config: {
@@ -398,8 +466,60 @@ module.exports = (server, prefix) => {
               .allow('')
               .example('for item description')
               .description('description'),
-            isWithdrawal: Joi.boolean()
-              .default(false)
+          }),
+          failAction: async (request, h, err) => {
+            throw err;
+          },
+        },
+        handler: bankingController.processFundTransfer,
+        plugins: {
+          'hapi-swagger': {
+            id: 'transfer-api',
+            responses: {
+              200: {
+                accountName: Joi.string().example('Successful'),
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      method: 'POST',
+      path: '/bank/bana-fund-transfer',
+      config: {
+        description: 'transfer api',
+        tags: ['api', 'banking'],
+        auth: 'simple',
+        validate: {
+          payload: Joi.object({
+            banaId: Joi.string()
+              .required()
+              .max(10)
+              .min(10)
+              .example('1234567890')
+              .description('beneficiary Account number'),
+            pin: Joi.string()
+              .min(4)
+              .max(4)
+              .required()
+              .example('0000'),
+            transactionAmount: Joi.number()
+              .required()
+              .min(1)
+              .example(5000)
+              .description('transactionAmount in naira'),
+            expenseCategory: Joi.string()
+              .optional()
+              .max(24)
+              .min(24)
+              .example('5fb55fd471da0f122d564e7a')
+              .description('beneficiary Account number'),
+            currencyCode: Joi.string()
+              .required()
+              .example('NGN'),
+            narration: Joi.string()
+              .allow('')
               .example('for item description')
               .description('description'),
           }),
@@ -407,7 +527,60 @@ module.exports = (server, prefix) => {
             throw err;
           },
         },
-        handler: bankingController.processFundTransfer,
+        handler: bankingController.sendMoneyToBanaAccount,
+        plugins: {
+          'hapi-swagger': {
+            id: 'transfer-api',
+            responses: {
+              200: {
+                accountName: Joi.string().example('Successful'),
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      method: 'POST',
+      path: '/bank/merchant-fund-transfer',
+      config: {
+        description: 'transfer api',
+        tags: ['api', 'banking'],
+        auth: 'simple',
+        validate: {
+          payload: Joi.object({
+            merchantId: Joi.string()
+              .required()
+              .max(10)
+              .min(10)
+              .example('1234567890')
+              .description('beneficiary Account number'),
+            pin: Joi.string()
+              .min(4)
+              .max(4)
+              .required()
+              .example('0000'),
+            transactionAmount: Joi.number()
+              .required()
+              .min(1)
+              .example(5000)
+              .description('transactionAmount in naira'),
+            expenseCategory: Joi.string()
+              .optional()
+              .max(24)
+              .min(24)
+              .example('5fb55fd471da0f122d564e7a')
+              .description('beneficiary Account number'),
+            saveMerchant: Joi.boolean()
+              .required()
+              .default(false)
+              .example('NGN'),
+          }),
+          failAction: async (request, h, err) => {
+            throw err;
+          },
+        },
+        handler: bankingController.sendMoneyMerchant,
         plugins: {
           'hapi-swagger': {
             id: 'transfer-api',

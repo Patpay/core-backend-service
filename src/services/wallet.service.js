@@ -32,7 +32,7 @@ module.exports = {
             message: ex,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(ex.message)}
             *_Service_*:  wallet
@@ -105,7 +105,7 @@ module.exports = {
             message: error,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(error.message)}
             *_Service_*:  user

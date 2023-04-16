@@ -37,7 +37,7 @@ module.exports = {
             message: ex,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(ex.message)}
             *_Service_*:  Transaction
@@ -65,7 +65,7 @@ module.exports = {
             message: ex,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(ex.message)}
             *_Service_*:  Transaction
@@ -136,7 +136,7 @@ module.exports = {
             message: ex,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(ex.message)}
             *_Service_*: Transaction
@@ -165,13 +165,42 @@ module.exports = {
             message: error,
           });
           // postRequest(
-          //   'https://hooks.slack.com/services/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',
+          //   'https://hooks.slack.com/services/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',
           //   {
           //     text: `${JSON.stringify(error.message)}
           // *_Service_*:  Transaction
           // *_Function_*: calculateCurrentMonthTransferCount`,
           //   },
           // );
+          return { error: constants.GONE_BAD };
+        }
+      },
+      async calculateCurrentDailyTransferCount(user) {
+        try {
+          if (!isValidObjectId(user)) return { error: constants.NOT_FOUND };
+          const query = {
+            createdAt: {
+              $gte: new Date(moment().startOf('day')),
+              $lte: new Date(moment().endOf('day')),
+            },
+            type: 'EXPENSE',
+            user,
+          };
+          const count = await Transaction.countDocuments(query);
+          return count;
+        } catch (error) {
+          logger.log({
+            level: 'error',
+            message: error,
+          });
+          postRequest(
+            'https://hooks.slack.com/services/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',
+            {
+              text: `${JSON.stringify(error.message)}
+          *_Service_*:  Transaction
+          *_Function_*: calculateCurrentMonthTransferCount`,
+            },
+          );
           return { error: constants.GONE_BAD };
         }
       },
@@ -255,7 +284,7 @@ module.exports = {
             message: error,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(error.message)}
           *_Service_*:  Transaction
@@ -284,7 +313,7 @@ module.exports = {
             message: ex,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(ex.message)}
             *_Service_*:  Transaction
@@ -444,7 +473,7 @@ module.exports = {
             level: 'error',
             message: ex,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(ex.message)}
             *_Service_*:  Transaction
             *_Function_*: transactionSummary`,

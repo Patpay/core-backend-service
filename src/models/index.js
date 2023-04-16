@@ -16,6 +16,7 @@ const { TransferTrans } = require('./transferTransaction/index');
 const { Merchant } = require('./merchant/index');
 const { Admin } = require('./admin/index');
 const { Role } = require('./role/index');
+const { SavedMerchant } = require('./savedMerchant/index');
 
 module.exports = {
   User,
@@ -36,4 +37,5 @@ module.exports = {
   Merchant,
   Admin,
   Role,
+  SavedMerchant,
 };

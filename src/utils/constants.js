@@ -18,6 +18,8 @@ module.exports = Object.freeze({
   INVALID_PIN: 'Invalid Pin',
   WITHDRAWAL_ACCOUNT: 'Withdrawal',
   TRANSFER_JOB: 'TRANSFER_JOB',
+  TRANSFER_BANA_JOB: 'BAN_TRANSFER_JOB',
+  NO_MERCHANT: 'No merchant found with that id',
   USER_ACCOUNT: 'User',
   MERCHANT_ACCOUNT: 'Merchant',
   BULK_TRANSFER_JOB: 'BULK TRANSFER JOB',
@@ -43,5 +45,6 @@ module.exports = Object.freeze({
   STATUS: {
     REVERSED: 'REVERSED',
     FAILED: 'FAILED',
+    PAID: 'PAID'
   },
 });

@@ -50,6 +50,8 @@ module.exports = {
       TransferTrans,
       User,
       Wallet,
+      Merchant,
+      SavedMerchant,
     } = require('../models/index');
 
     const sendTransferSuccessNotification = async (
@@ -101,17 +103,43 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           level: 'error',
           message: error,
         });
-        // postRequest(
-        //   'https://hooks.slack.com/services/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',
-        //   {
-        //     text: `${JSON.stringify(error.message)}
-        //   *_Service_*: Banking
-        //   *_Function_*: sendTransferSuccessNotification`,
-        //   },
-        // );
+        postRequest(
+          'https://hooks.slack.com/services/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',
+          {
+            text: `${JSON.stringify(error.message)}
+          *_Service_*: Banking
+          *_Function_*: sendTransferSuccessNotification`,
+          },
+        );
       }
     };
 
+    const addSavedMerchant = async (payload) => {
+      const {
+        merchantId,
+        merchantName,
+        user,
+        mobile,
+        nickName,
+      } = payload;
+      const savedMerchant = await SavedMerchant.findOne({
+        user,
+        merchantId,
+        status: true,
+      });
+
+      if (savedMerchant) return;
+
+      const createQuery = {
+        merchantId,
+        merchantName,
+        nickName,
+        user,
+      };
+      if (nickName) createQuery.nickName = nickName;
+      if (mobile) createQuery.mobile = mobile;
+      return await SavedMerchant.create(createQuery);
+    };
     const creditUserAccount = async (payload, bankAccount) => {
       const id = payload.user;
       const wallet = await walletService().updateWallet({
@@ -168,7 +196,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
         return await postRequest(logInUrl, loginData);
       } catch (error) {
         // postRequest(
-        //   'https://hooks.slack.com/services/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',
+        //   'https://hooks.slack.com/services/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',
         //   {
         //     text: ` Login to Kuda Failed}
         // *_Service_*: Banking
@@ -219,6 +247,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
         expensePayload,
       );
 
+
       const bankAccountPayload = {
         user: payload.user,
       };
@@ -228,6 +257,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           'user',
           'mobile email firstname lastname',
         );
+       
       if (!noNotification) {
         await sendTransferSuccessNotification(
           bankAccount,
@@ -394,7 +424,6 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           },
           headers,
         );
-
         const initiateTransfer = await postRequest(
           `${url}/transfer`,
           {
@@ -434,7 +463,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           return { responseCode: initiateTransfer.statusCode };
         }
         // postRequest(
-        //   'https://hooks.slack.com/services/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',
+        //   'https://hooks.slack.com/services/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',
         //   {
         //     text: `${JSON.stringify(initiateTransfer)}
         //   *_Service_*: Banking
@@ -453,7 +482,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           transactionReference: payload.transactionReference,
         };
         // postRequest(
-        //   'https://hooks.slack.com/services/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',
+        //   'https://hooks.slack.com/services/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',
         //   {
         //     text: `${JSON.stringify(transferPayload)}
         //   *_Service_*: Banking
@@ -467,7 +496,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           message: error,
         });
         postRequest(
-          'https://hooks.slack.com/services/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',
+          'https://hooks.slack.com/services/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',
           {
             text: `${JSON.stringify(error.message)}
           *_Service_*: Banking
@@ -548,14 +577,14 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: initiateTransfer.data.responseMessage,
           };
         }
-        // postRequest(
-        //   'https://hooks.slack.com/services/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',
-        //   {
-        //     text: `${JSON.stringify(initiateTransfer)}
-        //   *_Service_*: Banking
-        //   *_Function_*: sendMoneyMonnify`,
-        //   },
-        // );
+        postRequest(
+          'https://hooks.slack.com/services/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',
+          {
+            text: `${JSON.stringify(initiateTransfer)}
+          *_Service_*: Banking
+          *_Function_*: sendMoneyMonnify`,
+          },
+        );
         const transferPayload = {
           name: payload.beneficiaryAccountName,
           account_number: payload.beneficiaryAccountNumber,
@@ -567,14 +596,14 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           amount: payload.transactionAmount,
           transactionReference: payload.transactionReference,
         };
-        // postRequest(
-        //   'https://hooks.slack.com/services/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',
-        //   {
-        //     text: `${JSON.stringify(transferPayload)}
-        //   *_Service_*: Banking
-        //   *_Function_*:Monnify Down Make Transfer sendMoney`,
-        //   },
-        // );
+        postRequest(
+          'https://hooks.slack.com/services/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',
+          {
+            text: `${JSON.stringify(transferPayload)}
+          *_Service_*: Banking
+          *_Function_*:Monnify Down Make Transfer sendMoney`,
+          },
+        );
         return { error: constants.GONE_BAD };
       } catch (error) {
         logger.log({
@@ -582,7 +611,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           message: error,
         });
         postRequest(
-          'https://hooks.slack.com/services/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',
+          'https://hooks.slack.com/services/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',
           {
             text: `${JSON.stringify(error.message)}
             *_Service_*: Banking
@@ -632,7 +661,6 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           nameEnquiryResponse.data.data,
         );
 
-        // console.log(nameEnquiryResponseData)
         const reference = uuid();
         const dataPayload = {
           trackingReference: uuid(),
@@ -677,28 +705,28 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           amount: payload.transactionAmount,
           transactionReference: payload.transactionReference,
         };
-        // postRequest(
-        //   'https://hooks.slack.com/services/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',
-        //   {
-        //     text: `${JSON.stringify(transferPayload)}
-        //     *_Service_*: Banking
-        //     *_Function_*:Kuda Down Make Transfer sendMoney`,
-        //   },
-        // );
+        postRequest(
+          'https://hooks.slack.com/services/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',
+          {
+            text: `${JSON.stringify(transferPayload)}
+            *_Service_*: Banking
+            *_Function_*:Kuda Down Make Transfer sendMoney`,
+          },
+        );
         return { error: constants.GONE_BAD };
       } catch (error) {
         logger.log({
           level: 'error',
           message: error,
         });
-        // postRequest(
-        //   'https://hooks.slack.com/services/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',
-        //   {
-        //     text: `${JSON.stringify(error.message)}
-        //   *_Service_*: Banking
-        //   *_Function_*: sendMoneyKuda`,
-        //   },
-        // );
+        postRequest(
+          'https://hooks.slack.com/services/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',
+          {
+            text: `${JSON.stringify(error.message)}
+          *_Service_*: Banking
+          *_Function_*: sendMoneyKuda`,
+          },
+        );
         return { error: constants.GONE_BAD };
       }
     }
@@ -717,6 +745,16 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           return {
             name: `${banaAccount.firstname} ${banaAccount.lastname}`,
             banaId,
+          };
+        }
+        return { error: constants.NOT_FOUND };
+      },
+      async validateMerchantAccount(merchantId) {
+        const banaAccount = await Merchant.findOne({ merchantId });
+        if (banaAccount) {
+          return {
+            name: banaAccount.merchantName,
+            merchantId,
           };
         }
         return { error: constants.NOT_FOUND };
@@ -745,22 +783,24 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           ) {
             return { error: constants.LOW_WALLET_BALANCE };
           }
-          const banaAcc = await User.findOne({ banaId: payload.banaId });
-
+          const banaAcc = await (await User.findOne({ banaId: payload.banaId })).populate('bankAccount');
           if (!banaAcc) {
             return { error: constants.NOT_FOUND };
           }
 
+          payload.banaAcc = banaAcc;
+
           payload.QueueType = constants.TRANSFER_BANA_JOB;
           payload.transactionReference = uuid();
           producer(payload);
+          return { message: constants.SUCCESS }
         } catch (error) {
           logger.log({
             level: 'error',
             message: error,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(error.message)}
           *_Service_*: Banking
@@ -770,12 +810,112 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           return { error: constants.GONE_BAD };
         }
       },
+
+      async sendMoneyMerchant(payload, isJob) {
+        try {
+          const validatePin = await userService().validatePin(
+            payload.pin,
+            payload.user,
+          );
+          if (!validatePin || validatePin.error) {
+            return validatePin.error
+              ? { error: validatePin.error }
+              : { error: constants.INVALID_PIN };
+          }
+          const walletPayload = {
+            currencyCode: 'NGN',
+            user: payload.user,
+          };
+          payload.narration = 'Payment for Ride (Transportation)';
+          const wallet = await walletService().getWallet(walletPayload);
+          if (
+            wallet.error
+            || wallet.balance <= 0
+            || wallet.balance < payload.transactionAmount
+          ) {
+            return { error: constants.LOW_WALLET_BALANCE };
+          }
+
+          const merch = await Merchant.findOne({ merchantId: payload.merchantId });
+          
+          const bankAcc = await BankAccount.findOne({ merchant: merch._id, accountType: constant.MERCHANT_ACCOUNT });
+          if (!bankAcc) {
+            return { error: constant.NO_MERCHANT };
+          }
+          const { saveMerchant } = payload;
+          if (saveMerchant) {
+            const saveMerchPay = {
+              merchantId: merch._id,
+              merchantName: merch.merchantName,
+              user: payload.user,
+              mobile: merch.mobile,
+              nickName: payload.nickName,
+            };
+            await addSavedMerchant(saveMerchPay);
+          }
+          payload.expenseCategory = config.migrationIDs.TRANSPORTATION_CHARGE_EXPENSE_CATEGORY_ID;
+          const transferCount = await transactionService().calculateCurrentDailyTransferCount(payload.user);
+          let chargeAmount = 0;
+          let chargeId;
+          if (transferCount >= 1) {
+            const charge = await chargesService().calculateCharge({
+              name: constants.CHARGES.TRANSFER,
+              amount: payload.transactionAmount,
+            });
+            chargeAmount = charge.amount;
+            chargeId = charge._id;
+          }
+          const transactionSummary = await transactionService().calculateTransactionAmount({
+            user: payload.user, currencyCode: 'NGN', wallet,
+          });
+          if (
+            !wallet.user.bvnStatus
+              && !isJob
+              && (transactionSummary.daily + payload.transactionAmount >= 50000
+                || transactionSummary.monthly + payload.transactionAmount >= 500000)
+          ) {
+            return { error: constants.DAILY_LIMIT_EXCEEDED_UNVERIFIED };
+          }
+          const nipAccountResponse = await this.getNIPAccount({
+            accountNumber: bankAcc.accountNumber,
+            beneficiaryBank: bankAcc.bankCode,
+          });
+          if (nipAccountResponse.error) return nipAccountResponse;
+          payload.beneficiaryAccountNumber = nipAccountResponse.accountNumber
+          payload.beneficiaryAccountName = nipAccountResponse.accountName;
+          payload.beneficiaryBank = nipAccountResponse.bankCode;
+          payload.charge = {
+            amount: chargeAmount,
+            addCharge: chargeAmount > 0,
+            _id: chargeId,
+          };
+          payload.QueueType = constants.TRANSFER_JOB;
+          payload.transactionReference = uuid();
+          delete payload.merchantId;
+          delete payload.saveMerchant;
+          producer(payload);
+          return { msg: constants.SUCCESS };
+        } catch (error) {
+          logger.log({
+            level: 'error',
+            message: error,
+          });
+          postRequest(
+            'https://hooks.slack.com/services/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',
+            {
+              text: `${JSON.stringify(error.message)}
+          *_Service_*: Banking
+          *_Function_*: sendMoneyMerchant`,
+            },
+          );
+          return { error: constants.GONE_BAD };
+        }
+      },
       async sendMoneyToBanaAccountJob(payload) {
         try {
-          const { user } = payload;
+          const { user, banaAcc } = payload;
           delete payload.pin;
           delete payload.QueueType;
-          delete payload.banaId;
           const walletCheck = {
             currencyCode: 'NGN',
             user,
@@ -788,7 +928,6 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           ) {
             return { error: constants.LOW_WALLET_BALANCE };
           }
-          const banaAcc = await User.findOne({ banaId: payload.banaId });
           const walletPayload = {
             user,
             narration: payload.narration,
@@ -801,15 +940,15 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             amount: parseInt(payload.transactionAmount, 10),
             expenseCategory: payload.expenseCategory || config.migrationIDs.WITHDRAWAL_EXPENSE_CATEGORY_ID,
           };
-          const debitResponse = await debitUserAccount(walletPayload, true);
 
+          const debitResponse = await debitUserAccount(walletPayload, true);
           if (debitResponse === true) {
             const creditWallet = {
               user: banaAcc._id,
               narration: payload.narration,
               currencyCode: 'NGN',
               sourceAccountName: `${banaAcc.firstname} ${banaAcc.lastname}`,
-              sourceAccountNumber: `${banaAcc.banaId}`,
+              sourceAccountNumber: `${banaAcc.bankAccount.accountNumber}`,
               bankName: 'Bana Account',
               status: constants.STATUS.PAID,
               transactionReference: payload.transactionReference,
@@ -818,7 +957,6 @@ ${balance}Date: ${new Date().toLocaleString()}`;
 
             const banaBankAccount = await BankAccount.findOne({ user: banaAcc._id, provider: constant.PROVIDER_KUDA });
             const response = await creditUserAccount(creditWallet, banaBankAccount);
-
             if (response) {
               return { message: constants.SUCCESS };
             }
@@ -829,7 +967,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: error,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(error.message)}
           *_Service_*: Banking
@@ -913,7 +1051,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
 
           // eslint-disable-next-line array-callback-return
           // postRequest(
-          //   'https://hooks.slack.com/services/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',
+          //   'https://hooks.slack.com/services/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',
           //   {
           //     text: `${JSON.stringify(transfers)}
           //   *_Service_*: Banking
@@ -927,7 +1065,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: error,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(error)}
           *_Service_*: Banking
@@ -1000,6 +1138,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
               provider: constants.PROVIDER_KUDA,
               bank: 'Kuda Bank',
               user: payload.user,
+              accountType: constants.USER_ACCOUNT,
               isSuccessful: responseData.Status,
             });
             return account._id;
@@ -1064,7 +1203,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: error,
           });
           // postRequest(
-          //   'https://hooks.slack.com/services/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',
+          //   'https://hooks.slack.com/services/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',
           //   {
           //     text: `${JSON.stringify(error.message)}
           // *_Service_*: Banking
@@ -1118,7 +1257,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: error,
           });
           // postRequest(
-          //   'https://hooks.slack.com/services/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',
+          //   'https://hooks.slack.com/services/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',
           //   {
           //     text: `${JSON.stringify(error.message)}
           // *_Service_*: Banking
@@ -1203,7 +1342,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: error,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(error.message)}
           *_Service_*: Banking
@@ -1299,17 +1438,16 @@ ${balance}Date: ${new Date().toLocaleString()}`;
           }
           // const response = await this.sendMoney(payload, bankAccount);
           if (response.error) {
-            // postRequest(
-            //   'https://hooks.slack.com/services/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',
-            //   {
-            //     text: `Reversed ${JSON.stringify(payload)}
-            // *_Service_*: Banking
-            // *_Function_*: Process transfer`,
-            //   },
-            // );
+            postRequest(
+              'https://hooks.slack.com/services/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',
+              {
+                text: `Reversed ${JSON.stringify(payload)}
+            *_Service_*: Banking
+            *_Function_*: Process transfer`,
+              },
+            );
             walletPayload.narration = `Refund - ${payload.narration}`;
             delete walletPayload.expenseCategory;
-            walletPayload.inflowType = constant.FLOW_TYPE.Funding;
             await creditUserAccount(walletPayload);
             return response;
             // }
@@ -1397,7 +1535,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: ex,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(ex.message)}
           *_Service_*: Banking
@@ -1428,7 +1566,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: ex,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(ex.message)}
           *_Service_*: Banking
@@ -1460,7 +1598,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: ex,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(ex.message)}
           *_Service_*: Banking
@@ -1490,7 +1628,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: error,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(error.message)}
           *_Service_*: Banking
@@ -1519,7 +1657,7 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             message: error,
           });
           postRequest(
-            'https://hooks.slack.com/services/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',
+            'https://hooks.slack.com/services/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',
             {
               text: `${JSON.stringify(error.message)}
           *_Service_*: Banking
@@ -1558,14 +1696,14 @@ ${balance}Date: ${new Date().toLocaleString()}`;
             level: 'error',
             message: error,
           });
-          // postRequest(
-          //   'https://hooks.slack.com/services/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',
-          //   {
-          //     text: `${JSON.stringify(error.message)}
-          // *_Service_*: Banking
-          // *_Function_*: getBeneficiaries`,
-          //   },
-          // );
+          postRequest(
+            'https://hooks.slack.com/services/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',
+            {
+              text: `${JSON.stringify(error.message)}
+          *_Service_*: Banking
+          *_Function_*: getBeneficiaries`,
+            },
+          );
           return { error: constants.GONE_BAD };
         }
       },

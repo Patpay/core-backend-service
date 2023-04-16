@@ -82,12 +82,56 @@ const verifyAccountDetails = async (request) => {
   return response;
 };
 
+const verifyBanaAccount = async (request) => {
+  const { banaId } = request.payload;
+  const response = await request.server.app.services.banking.validateBanaAccount(banaId);
+  if (response.error) {
+    return error(400, response.error);
+  }
+  return response;
+};
+
+const verifyMerchantAccount = async (request) => {
+  const { merchantId } = request.payload;
+  const response = await request.server.app.services.banking.validateMerchantAccount(banaId);
+  if (response.error) {
+    return error(400, response.error);
+  }
+  return response;
+};
+
 const processFundTransfer = async (request) => {
   const { payload } = request;
   const { user } = await verify(request.auth.credentials.token);
   payload.user = user;
   const response = await request.server.app.services.banking.processTransfer(
     payload,
+  );
+  if (response.error) {
+    return error(400, response.error);
+  }
+  return response;
+};
+
+const sendMoneyToBanaAccount = async (request) => {
+  const { payload } = request;
+  const { user } = await verify(request.auth.credentials.token);
+  payload.user = user;
+  const response = await request.server.app.services.banking.sendMoneyToBanaAccount(
+    payload,
+  );
+  if (response.error) {
+    return error(400, response.error);
+  }
+  return response;
+};
+
+const sendMoneyMerchant = async (request) => {
+  const { payload } = request;
+  const { user } = await verify(request.auth.credentials.token);
+  payload.user = user;
+  const response = await request.server.app.services.banking.sendMoneyMerchant(
+    payload
   );
   if (response.error) {
     return error(400, response.error);
@@ -224,4 +268,8 @@ module.exports = {
   kudaPaymentCollection,
   deactivateBeneficiary,
   monnifyPaymentCollection,
+  verifyBanaAccount,
+  verifyMerchantAccount,
+  sendMoneyToBanaAccount,
+  sendMoneyMerchant,
 };

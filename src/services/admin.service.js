@@ -72,16 +72,16 @@ module.exports = {
           }
           return { error: constants.DUPLICATE_USER };
         } catch (ex) {
-        //   logger.log({
-        //     level: 'error',
-        //     message: ex,
-        //   });
-        //   postRequest('https://hooks.slack.com/services/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', {
-        //     text: `${JSON.stringify(ex.message)}
-        //     Service: Admin
-        //     Function: SignUpAdmin`,
-        //   });
-        //   return { error: constants.GONE_BAD };
+          logger.log({
+            level: 'error',
+            message: ex,
+          });
+          postRequest('https://hooks.slack.com/services/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', {
+            text: `${JSON.stringify(ex.message)}
+            Service: Admin
+            Function: SignUpAdmin`,
+          });
+          return { error: constants.GONE_BAD };
         }
       },
 
@@ -115,7 +115,7 @@ module.exports = {
       //         level: 'error',
       //         message: ex,
       //       });
-      //       postRequest('https://hooks.slack.com/services/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', {
+      //       postRequest('https://hooks.slack.com/services/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', {
       //         text: `${JSON.stringify(ex.message)}
       //         Service: Admin
       //         Function: businessBillReconcilation`,
@@ -151,7 +151,7 @@ module.exports = {
             level: 'error',
             message: error,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(error.message)}
             Service: Admin
             Function: SignInAdmin`,
@@ -206,7 +206,7 @@ module.exports = {
             level: 'error',
             message: error,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(error.message)}
             Service: Admin
             Function: getAdminById`,
@@ -260,7 +260,7 @@ module.exports = {
             level: 'error',
             message: error,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(error.message)}
             Service: Admin
             Function: ForgotPasswordRequest`,
@@ -298,7 +298,7 @@ module.exports = {
             level: 'error',
             message: error,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(error.message)}
             Service: Admin
             Function: ResetPassword`,
@@ -329,7 +329,7 @@ module.exports = {
             level: 'error',
             message: error,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(error.message)}
             Service: Admin
             Function: updateAdmin`,
@@ -369,7 +369,7 @@ module.exports = {
             level: 'error',
             message: ex,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(ex.message)}
             Service: Admin
             Function: deleteAdmin`,
@@ -416,7 +416,7 @@ module.exports = {
             level: 'error',
             message: error,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(error.message)}
             Service: Admin
             Function: changePassword`,
@@ -438,7 +438,7 @@ module.exports = {
             level: 'error',
             message: error,
           });
-          postRequest('https://hooks.slack.com/services/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', {
+          postRequest('https://hooks.slack.com/services/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', {
             text: `${JSON.stringify(error.message)}
             Service: Admin
             Function: validateForgottenPasswordAdmin`,
